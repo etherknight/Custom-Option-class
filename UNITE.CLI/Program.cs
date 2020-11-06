@@ -9,11 +9,8 @@ namespace UNITE.CLI
     {
         static void Main(string[] args)
         {
-            Option<Chicken> test = new Chicken()
-            {
-                Name = "Eggbert"
-            };
-            Option<Chicken> test2 = null;
+            Option<Chicken> test = HatchAnEgg("Eggbert");
+            Option<Chicken> test2 = CrackedEgg();
 
             string name = string.Empty;
             name = test.Finally<string>(SomeChicken, NoChicken);
@@ -25,12 +22,29 @@ namespace UNITE.CLI
 
         private static string NoChicken()
         {
-            return "The Nameless Chicken";
+            return "Scrambled Egg";
         }
 
         private static string SomeChicken(Chicken chicken)
         {
             return chicken.Name;
+        }
+
+        private static Option<Chicken> HatchAnEgg(string name)
+        {
+            Option<Chicken> chicken = new Chicken()
+            {
+                Name = name,
+                BeforeEgg = false
+            };
+
+            return chicken;
+        }
+
+        private static Option<Chicken> CrackedEgg()
+        {
+            Option<Chicken> egg = null;
+            return egg;
         }
     }
 
