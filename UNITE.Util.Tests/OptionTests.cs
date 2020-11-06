@@ -140,6 +140,14 @@ namespace UNITE.Util.Tests
         }
 
         [TestMethod]
+        public void WhenValueIsNull_ValueOrThrowGenerartesChosenException()
+        {
+            Option<Chicken> chicken = null;
+
+            Assert.ThrowsException<ArgumentNullException>(() => chicken.ValueOrThrow<ArgumentNullException>());
+        }
+
+        [TestMethod]
         public void WhenValueIsSet_TryGetValueReturnsTrueAndValue()
         {
             Option<Chicken> chicken = new Chicken();

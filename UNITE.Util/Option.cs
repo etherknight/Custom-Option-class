@@ -37,6 +37,36 @@ namespace UNITE.Util
         }
 
         /// <summary>
+        /// Allows chaining of multiple calls together. A failure at 
+        /// any point in a chain of Then() calls will drop through to the 
+        /// Finally( none ) block.
+        /// </summary>
+        /// /// <example>
+        /// <code>
+        /// Option<string> result = "Example";
+        /// 
+        /// result.Then(str => $"{str} and then")
+        ///       .Then(str => $"{str_ and another then")
+        ///       .Finally
+        ///       (
+        ///          some: (finalStr) => Console.WriteLine(finalStr),
+        ///          none: () => throw new Exception("Really broken");
+        ///       )
+        /// </code>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="next"></param>
+        /// <returns></returns>
+        public Option<TOut> Then<TOut>(Func<TObject, TOut> next)
+        {
+            if (false == hasValue)
+            {
+                return new Option<TOut>();
+            }
+
+            return next(value);
+        }
+
+        /// <summary>
         /// Checks the final result of the option.
         /// </summary>
         /// <example>
@@ -92,7 +122,7 @@ namespace UNITE.Util
         }
 
         /// <summary>
-        /// 
+        /// Safe request to access the value of the Option.
         /// </summary>
         /// <param name="value"></param>
         /// <returns>True if value is provided.</returns>
@@ -111,6 +141,22 @@ namespace UNITE.Util
         /// <summary>
         /// Get the value of the Option or throw an exception.
         /// </summary>
+        /// <typeparam name="TException">Exception to throw</typeparam>
+        /// <returns>Value of the Option</returns>
+        public TObject ValueOrThrow<TException>()
+            where TException: Exception, new()
+        {
+            if (false == hasValue)
+            {
+                throw new TException();
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Get the value of the Option or throw an exception.
+        /// </summary>
         /// <param name="message">Optional error message for exception</param>
         /// <exception cref="OptionValueException">Thrown if there is no value.</exception>
         /// <returns>Value of the Option</returns>
@@ -123,22 +169,6 @@ namespace UNITE.Util
 
             return value;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="next"></param>
-        /// <returns></returns>
-        public Option<TOut> Then<TOut>(Func<TObject, TOut> next)
-        {
-            if (false == hasValue)
-            {
-                return new Option<TOut>();
-            }
-
-            return next(value);
-        }        
     }
 
     public sealed class OptionValueException : Exception
