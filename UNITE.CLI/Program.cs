@@ -9,15 +9,33 @@ namespace UNITE.CLI
     {
         static void Main(string[] args)
         {
-            Option<Chicken> test = HatchAnEgg("Eggbert");
-            Option<Chicken> test2 = CrackedEgg();
-
             string name = string.Empty;
-            name = test.Finally<string>(SomeChicken, NoChicken);
+
+            // Test 1:  A sequence of events to generate a chicken
+            Option<Egg> test = LayEgg();
+            
+            name = test.Then<Chicken>(egg => HatchAnEgg(egg))
+                       .Finally(SomeChicken, NoChicken);  
             Console.WriteLine($"My name is {name}");
 
-            name = test2.Finally<string>(SomeChicken, NoChicken);
-            Console.WriteLine($"My name is {name}");
+
+            // Test 2: Lets try a failure case. 
+            try
+            {
+                name = LayAnotherEgg()
+                            .Then<Egg>(egg => CrackEgg(egg))
+                            .Then<Chicken>(egg => HatchAnEgg(egg))
+                            .Finally<string>(SomeChicken, NoChicken);
+                Console.WriteLine($"My name is {name}");
+            }
+            catch(Exception e)
+            {
+                // We should never see "Eggception" from HatchAnEgg() 
+                //
+                // The Option class will protect us from ever passing the cracked egg
+                // into HatchAnEgg();
+                Console.WriteLine(e.Message);
+            }
         }
 
         private static string NoChicken()
@@ -30,27 +48,49 @@ namespace UNITE.CLI
             return chicken.Name;
         }
 
-        private static Option<Chicken> HatchAnEgg(string name)
+
+        private static Egg LayEgg()
         {
-            Option<Chicken> chicken = new Chicken()
+            Egg egg = new Egg();
+            return egg;
+        }
+
+        // This version of LayEgg returns the Option<Egg>
+        // for us.  
+        // Now we don't have to assign it in our method 
+        // and can just chain calls.
+        private static Option<Egg> LayAnotherEgg()
+        {
+            Option<Egg> egg = new Egg();
+            return egg;
+        }
+
+        private static Chicken HatchAnEgg(Egg egg)
+        {
+            if (egg == default(Egg))
             {
-                Name = name,
-                BeforeEgg = false
+                throw new Exception("Eggception");
+            }
+
+            Chicken chicken = new Chicken()
+            {
+                Name = "Eggbert"
             };
 
             return chicken;
         }
-
-        private static Option<Chicken> CrackedEgg()
+        private static Egg CrackEgg(Egg egg)
         {
-            Option<Chicken> egg = null;
-            return egg;
+            return default(Egg);
         }
     }
 
     public class Chicken
     {
         public string Name { get; set; }
-        public bool BeforeEgg { get; set; }
+    }
+
+    public class Egg
+    {
     }
 }
