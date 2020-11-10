@@ -14,7 +14,7 @@ namespace Options.CLI
             // Test 1:  A sequence of events to generate a chicken
             Option<Egg> test = LayEgg();
             
-            name = test.Then<Chicken>(egg => HatchAnEgg(egg))
+            name = test.Then<Chicken>(egg => Hatch(egg))
                        .Finally(SomeChicken, NoChicken);  
             Console.WriteLine($"My name is {name}");
 
@@ -24,7 +24,7 @@ namespace Options.CLI
             {
                 name = LayAnotherEgg()
                             .Then<Egg>(egg => CrackEgg(egg))            // Sets us into an error state.
-                            .Then<Chicken>(egg => HatchAnEgg(egg))      // Never called because the error drops through to finally. 
+                            .Then<Chicken>(egg => Hatch(egg))           // Never called because the error drops through to finally. 
                             .Finally<string>(SomeChicken, NoChicken);
                 Console.WriteLine($"My name is {name}");
             }
@@ -92,7 +92,7 @@ namespace Options.CLI
             return egg;
         }
 
-        private static Chicken HatchAnEgg(Egg egg)
+        private static Chicken Hatch(Egg egg)
         {
             if (egg == default(Egg))
             {
