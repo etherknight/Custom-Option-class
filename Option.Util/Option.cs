@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime;
 
-namespace UNITE.Util
+namespace Options.Util
 {
     public struct Option<TObject>
     {
@@ -181,6 +181,4 @@ namespace UNITE.Util
         {
         }
     }
-
-   
 }

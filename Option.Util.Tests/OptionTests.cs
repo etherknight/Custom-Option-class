@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 
-namespace UNITE.Util.Tests
+namespace Options.Util.Tests
 {
     [TestClass]
     public class OptionTests

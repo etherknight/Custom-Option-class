@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UNITE.Util;
+using Options.Util;
 
-namespace UNITE.CLI
+namespace Options.CLI
 {
     class Program
     {
@@ -23,8 +23,8 @@ namespace UNITE.CLI
             try
             {
                 name = LayAnotherEgg()
-                            .Then<Egg>(egg => CrackEgg(egg))
-                            .Then<Chicken>(egg => HatchAnEgg(egg))
+                            .Then<Egg>(egg => CrackEgg(egg))            // Sets us into an error state.
+                            .Then<Chicken>(egg => HatchAnEgg(egg))      // Never called because the error drops through to finally. 
                             .Finally<string>(SomeChicken, NoChicken);
                 Console.WriteLine($"My name is {name}");
             }
@@ -35,6 +35,33 @@ namespace UNITE.CLI
                 // The Option class will protect us from ever passing the cracked egg
                 // into HatchAnEgg();
                 Console.WriteLine(e.Message);
+            }
+
+            // Test 3 : Sometimes we just want the value
+            try
+            {
+                Option<Chicken> test3 = null;  // set to no value for now. 
+
+                // Even though we've set to null above - we've set the value to null. 
+                // The option object itself is not null, so we can safely use it. 
+                if (false == test3.TryGetValue(out Chicken nugget))
+                {
+                    Console.WriteLine("No nuggets");
+                }
+
+                //We can throw an argument of our choosing. 
+                Chicken wing = test3.ValueOrThrow<ArgumentNullException>();
+
+                // Or we can use the standard OptionValueException with our own message.
+                Chicken roast = test3.ValueOrThrow("Needs more spuds.");
+            }
+            catch (OptionValueException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (ArgumentNullException)
+            {
+                Console.WriteLine("We got the exception");
             }
         }
 

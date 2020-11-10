@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UNITE.Util\UNITE.Util.csproj" />
+    <ProjectReference Include="..\Option.Util\Option.Util.csproj" />
   </ItemGroup>
 
 </Project>
